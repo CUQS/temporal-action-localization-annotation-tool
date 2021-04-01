@@ -1,0 +1,23 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [
+    "electron"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^12.0.2",
+    "video.js": "^7.11.4"
+  },
+  "dependencies": {
+    "electron-json-storage": "^4.4.0",
+    "jquery": "^3.6.0",
+    "mousetrap": "^1.6.5"
+  },
+  "description": ""
+}

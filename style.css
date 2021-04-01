@@ -1,0 +1,88 @@
+.vjs-has-started.vjs-user-inactive.vjs-playing .vjs-control-bar {
+    opacity: 1;
+}
+.vjs-control-bar .vjs-thumbnail {
+    position: absolute;
+    width: 158px;
+    height: 90px;
+    top: -100px;
+    background-color: #000;
+    display: none;
+}
+.vjs-ann-bar {
+    position: absolute;
+    width: 2px;
+    height: 5px;
+    top: 20px;
+    background-color: #4e95ff;
+    display: none;
+}
+#container {
+    display: grid;
+    grid-template-rows: 150px 50px 250px 50px;
+    grid-template-columns: 870px 380px;
+    grid-template-areas:
+        "areaA areaB"
+        "areaA areaC"
+        "areaA areaD"
+        "areaA areaE";
+}
+div#content {
+    grid-area: areaA;
+    margin-left: 10px;
+}
+div#navigation {
+    grid-area: areaB;
+    margin-left: 10px;
+    overflow: auto;
+    scroll-snap-type: y;
+    background-color: #c7edcc;
+}
+.list_i {
+    padding:  5px;
+    background-color: #c7edcc;
+    border-radius:  1px;
+    margin-bottom: 0px;
+    color: rgb(0, 0, 0);
+    font-size:  10px;
+}
+.list_extra {
+    padding:  3px;
+    border-radius:  1px;
+    margin-bottom: 0px;
+    color: rgb(0, 0, 0);
+    font-size:  10px;
+}
+div#extra {
+    grid-area: areaC;
+    margin-left: 10px;
+}
+div#ann_action {
+    grid-area: areaD;
+    margin-left: 10px;
+    overflow: auto;
+    scroll-snap-type: y;
+    background-color: #c7edcc;
+}
+div#signal_plate{
+    grid-area: areaE;
+}
+#save_btn {
+    background-color: #fcf3c1;
+    margin-left: 20px;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%
+}
+#error_btn {
+    background-color: #69aece;
+    margin-left: 20px;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%
+}
+#text_action_category {
+    margin-left: 10px;
+}

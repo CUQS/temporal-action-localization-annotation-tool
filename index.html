@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+	<title>Hello World!</title>
+
+	<link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+	<link rel="stylesheet" href="style.css">
+	
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+</head>
+<body style="background: white;">
+	<div id="container">
+		<div class="content">
+			<video id="video" class="video-js vjs-default-skin" width="853" height="480" controls preload="auto"> 
+				<source id="videoMp4" src="" type='video/mp4'>
+			</video>
+		</div>
+		<div class="containerVideo" id="navigation"></div>
+		<div id="extra">
+			<li class="list_extra" id="json_root">json_root</li>
+			<li class="list_extra" id="video_name">video_name</li>
+		</div>
+		<div id="ann_action"></div>
+		<div id="signal_plate">
+			<button id="save_btn"></button>
+			<input type="text" id="text_action_category" value="acting" maxlength="20"/>
+			<select id="color_select" onchange="color_change()" style="background-color: violet;">
+				<option value="violet" style="background-color:violet">violet</option>
+				<option value="goldenrod" style="background-color:goldenrod">goldenrod</option>
+				<option value="pink" style="background-color:pink">pink</option>
+				<option value="coral" style="background-color:coral">coral</option>
+				<option value="forestgreen" style="background-color:forestgreen">forestgreen</option>
+				<option value="brown" style="background-color:brown">brown</option>
+				<option value="teal" style="background-color:teal">teal</option>
+				<option value="skyblue" style="background-color:skyblue">skyblue</option>
+			</select>
+			<button id="error_btn"></button>
+		</div>
+	</div>
+
+	<script src="./node_modules/video.js/dist/video.js"></script>
+	<script src="./node_modules/vjs-video/dist/vjs-video.js"></script>
+	<script src="./node_modules/mousetrap/mousetrap.min.js"></script>
+	<script src="./node_modules/electron-json-storage/lib/storage.js"></script>
+	<script src="./node_modules/jquery/dist/jquery.min.js"></script>
+	<script src="./renderer.js"></script>
+	<script src="./save.js"></script>
+</body>
+</html>
