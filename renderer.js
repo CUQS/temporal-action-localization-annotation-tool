@@ -117,6 +117,7 @@ let init = function () {
             for (let i = 1; i <= duration_t; i++) {
                 array.push(i);
             }
+            setProgress(10)
 
             //
             let canvas;
@@ -224,6 +225,7 @@ let init = function () {
                 }
 
             }
+            setProgress(33)
 
             // looping through thumbnail list to update thumbnail
             thumbnails.forEach(function(item) {
@@ -235,12 +237,15 @@ let init = function () {
             });
 
             console.log('done...');
+
+            setProgress(66)
             
             if (loading_flag) {
                 console.log("load: "+that.duration())
                 load_annotation_state()
                 loading_flag = false
             }
+            setProgress(100)
         });
 
         // playing video to hit "loadeddata" event
@@ -338,6 +343,7 @@ function select_video(elemnt) {
         }
         remove_now = []
         loading_flag = true
+        setProgress(0)
         change_video(vid)
     }
 }
@@ -363,6 +369,18 @@ vPlayer = videojs('video', {
 vPlayer.on('ready', function() {
     init()
 })
+
+let circle = document.querySelector('circle')
+let radius = circle.r.baseVal.value
+let circumference = radius * 2 * Math.PI
+circle.style.strokeDasharray = `${circumference} ${circumference}`
+circle.style.strokeDashoffset = `${circumference}`
+
+function setProgress(percent) {
+    const offset = circumference - percent / 100 * circumference
+    circle.style.strokeDashoffset = offset
+}
+setProgress(0)
 
 function load_project() {
     vids = []
@@ -429,6 +447,7 @@ function load_project() {
                             set_video_name(file_name[file_name.length-1])
                             check_change()
                             loading_flag = true
+                            setProgress(0)
                             change_video(vids[0])
                         } else {
                             ann_all["video"].push({"name": "video_name", "action": [], "duration": 0})
@@ -448,6 +467,7 @@ function load_project() {
                         if (check_change()) {
                             // load anntation
                             loading_flag = true
+                            setProgress(0)
                             change_video(vids[0])
                         }
                     }

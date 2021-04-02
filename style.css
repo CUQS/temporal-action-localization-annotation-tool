@@ -109,3 +109,12 @@ div#setting_plate{
     height: 20px;
     border-radius: 50%
 }
+.progress-ring {
+    margin-left: 325px;
+    margin-top: -40px;
+}
+.progress-ring__circle {
+  transition: 0.35s stroke-dashoffset;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+}
