@@ -22,10 +22,13 @@
 			<li class="list_extra" id="video_name">video_name</li>
 		</div>
 		<div id="ann_action"></div>
-		<div id="signal_plate">
+		<div id="setting_plate">
 			<button id="save_btn"></button>
-			<input type="text" id="text_action_category" value="acting" maxlength="20"/>
-			<select id="color_select" onchange="color_change()" style="background-color: violet;">
+			<div id="action_wrap">
+				<input type="text" id="text_action_category" value="acting" maxlength="20"/>
+				<select id="action_select" onchange="action_change(this)"></select>
+			</div>
+			<select id="color_select" onchange="color_change(this)" style="background-color: violet;">
 				<option value="violet" style="background-color:violet">violet</option>
 				<option value="goldenrod" style="background-color:goldenrod">goldenrod</option>
 				<option value="pink" style="background-color:pink">pink</option>

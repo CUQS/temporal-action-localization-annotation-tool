@@ -1,5 +1,6 @@
 const { app, BrowserWindow, dialog } = require('electron')
 const path = require('path')
+require('@electron/remote/main').initialize()
 
 const { Menu, MenuItem } = require('electron')
 const menu = new Menu()

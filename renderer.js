@@ -1,4 +1,5 @@
-const { dialog } = require('electron').remote
+const { dialog } = require('@electron/remote');
+const { set } = require('electron-json-storage');
 
 let thumbnails = [];
 
@@ -13,6 +14,8 @@ let json_root = ""
 let color_now = "violet"
 const color_plate = ["violet", "goldenrod", "pink", "coral", "forestgreen", "brown", "teal", "skyblue"]
 let action_list = []
+let action_color = []
+let loading_flag = false
 
 let cur_video_id = 0
 
@@ -232,6 +235,12 @@ let init = function () {
             });
 
             console.log('done...');
+            
+            if (loading_flag) {
+                console.log("load: "+that.duration())
+                load_annotation_state()
+                loading_flag = false
+            }
         });
 
         // playing video to hit "loadeddata" event
@@ -242,10 +251,18 @@ let init = function () {
 let vPlayer = null
 
 let change_video = function (vid) {
-    vPlayer.src({type: "video/mp4", src: vid});
-    thumbnails = [];
-    init();
-    vPlayer.play();
+    vPlayer.src({type: "video/mp4", src: vid})
+    thumbnails = []
+    init()
+    vPlayer.play()
+}
+
+function set_duration() {
+    if (vPlayer) {
+        duration = vPlayer.duration()
+    } else {
+        duration = 0
+    }
 }
 
 function set_video_name(file_name) {
@@ -258,6 +275,8 @@ function check_change() {
         cur_video_name = load_name
         reset_ann()
         ann_cur_id = 0
+        document.querySelectorAll('.vjs-ann-bar').forEach(e => e.remove())
+        document.querySelectorAll('.ann_text').forEach(e => e.remove())
         return true
     }
     cur_video_name = load_name
@@ -265,10 +284,12 @@ function check_change() {
 }
 
 function load_annotation_state() {
-    let ann_i = ann_all["video"][cur_video_id]["action"]
     ann_cur_id = ann_all["video"][cur_video_id]["action"].length
-    duration = ann_all["video"][cur_video_id]["duration"]
     ann_state = "create"
+    set_duration()
+    console.log("sync: "+duration)
+    // duration = ann_all["video"][cur_video_id]["duration"]
+    let ann_i = ann_all["video"][cur_video_id]["action"]
     if (ann_i.length > 0) {
         let slider_bar = $('.vjs-play-progress.vjs-slider-bar')
         
@@ -279,46 +300,45 @@ function load_annotation_state() {
             li_t.value = i
             li_t.className = "ann_text"
             $('#ann_action').append(li_t)
-            $('#ann_'+i).append(ann_i[i]["category"] + " : " + ann_i[i]["start"].toFixed(3) + ", " + ann_i[i]["end"].toFixed(3))
-            $('#ann_'+i).append('<a href="#" onclick="select_annotation(this)" style="margin-left: 70px">' + "✂" + '</a>')
-            $('#ann_'+i).append('<a href="#" onclick="remove_annotation(this)" style="margin-left: 15px">' + "⤺" + '</a>')
+            let action_t = ann_i[i]["category"]
+            $('#ann_'+i).append(action_t + " : " + ann_i[i]["start"].toFixed(3) + ", " + ann_i[i]["end"].toFixed(3))
+            add_ann_tool(i)
             // add ann bar
-            slider_bar.append('<div class="vjs-ann-bar" id="ann_bar_' + i + '"></div>')
-            let action_idx = action_list.findIndex(element => element == ann_i[i]["category"])
+            slider_bar.append('<div class="vjs-ann-bar" onclick="select_annotation(this)" id="ann_bar_'+ i +'"></div>')
+            let action_idx = get_action_idx(action_t)
             let color_t = '#4e95ff'
             if (action_idx >= 0) {
-                color_t = color_plate[action_idx % color_plate.length]
+                color_t = action_color[action_idx]
             } else {
-                action_list.push(ann_i[i]["category"])
+                action_list.push(action_t)
                 action_idx = action_list.length - 1
                 color_t = color_plate[action_idx % color_plate.length]
+                action_color.push(color_t)
+                $("#action_select").append('<option class="action_select_item" value="'+action_t+'" style="background-color:'+color_t+'">'+action_t+'</option>')
             }
             set_ann_bar(ann_i[i]["start"], ann_i[i]["end"], i, color_t)
         }
+        action_now = action_list[0]
+        document.getElementById("action_select").style.backgroundColor = action_color[0]
     }
 }
 
 function select_video(elemnt) {
     let vid = vids[elemnt.parentElement.value]
     cur_video_id = elemnt.parentElement.value
-    change_video(vid)
     
     file_name = vid.split("/")
     set_video_name(file_name[file_name.length-1])
 
     if (check_change()) {
-        document.querySelectorAll('.vjs-ann-bar').forEach(e => e.remove());
-        document.querySelectorAll('.ann_text').forEach(e => e.remove());
-
         if (remove_now.length > 0) {
             remove_now.forEach(remove_idx => {
                 ann_all["video"][remove_idx]["action"] = ann_all["video"][remove_idx]["action"].filter(e => e["end"] > 0)
             })
         }
         remove_now = []
-
-        // load anntation
-        load_annotation_state()
+        loading_flag = true
+        change_video(vid)
     }
 }
 
@@ -339,7 +359,7 @@ vPlayer = videojs('video', {
         type: "video/mp4",
         src: "./test.mp4"
     }]
-});
+})
 vPlayer.on('ready', function() {
     init()
 })
@@ -347,12 +367,18 @@ vPlayer.on('ready', function() {
 function load_project() {
     vids = []
     ann_all = {"video": []}
+    action_list = []
+    action_color = []
+    color_now = "violet"
+    duration = 0
+    
     cur_video_id = 0
 
     let video_count = 0
     
-    document.querySelectorAll('.video_list_i').forEach(e => e.remove());
-    document.querySelectorAll('.ann_text').forEach(e => e.remove());
+    document.querySelectorAll('.video_list_i').forEach(e => e.remove())
+    document.querySelectorAll('.ann_text').forEach(e => e.remove())
+    document.querySelectorAll('.action_select_item').forEach(e => e.remove())
 
     dialog.showOpenDialog({
         title:'select video directory',
@@ -399,14 +425,11 @@ function load_project() {
                             }
                         }
                         if (vids.length > 0) {
-                            change_video(vids[0])
                             let file_name = vids[0].split("/")
                             set_video_name(file_name[file_name.length-1])
-                            if (check_change()) {
-                                document.querySelectorAll('.vjs-ann-bar').forEach(e => e.remove());
-                                document.querySelectorAll('.ann_text').forEach(e => e.remove());
-                            }
-                            load_annotation_state()
+                            check_change()
+                            loading_flag = true
+                            change_video(vids[0])
                         } else {
                             ann_all["video"].push({"name": "video_name", "action": [], "duration": 0})
                         }
@@ -418,17 +441,14 @@ function load_project() {
                     } else {
                         // there is no annotations.json, display first video
                         cur_video_id = 0
-                        change_video(vids[0])
                         
                         let file_name = vids[0].split("/")
                         set_video_name(file_name[file_name.length-1])
 
                         if (check_change()) {
-                            document.querySelectorAll('.vjs-ann-bar').forEach(e => e.remove());
-                            document.querySelectorAll('.ann_text').forEach(e => e.remove());
-
                             // load anntation
-                            load_annotation_state()
+                            loading_flag = true
+                            change_video(vids[0])
                         }
                     }
                 }
@@ -437,10 +457,24 @@ function load_project() {
     })
 }
 
-function color_change() {
-    let sE = document.getElementById("color_select")
-    color_now = sE.value
-    sE.style.backgroundColor = color_now
+function color_change(elemnt) {
+    color_now = elemnt.value
+    elemnt.style.backgroundColor = color_now
+}
+
+function get_action_idx(act) {
+    return action_list.findIndex(element => element == act)
+}
+
+function action_change(elemnt) {
+    action_now = elemnt.value
+    let tE = document.getElementById("text_action_category")
+    tE.value = action_now
+    let action_idx = get_action_idx(action_now)
+    color_now = action_color[action_idx]
+    document.getElementById("action_select").style.backgroundColor = color_now
+    document.getElementById("color_select").selectedIndex = color_plate.findIndex(element => element == color_now)
+    document.getElementById("color_select").style.backgroundColor = color_now
 }
 
 // stop video
