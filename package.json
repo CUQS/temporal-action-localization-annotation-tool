@@ -8,7 +8,7 @@
   "keywords": [
     "electron"
   ],
-  "author": "",
+  "author": "cuqs",
   "license": "ISC",
   "devDependencies": {
     "electron": "^12.0.2",
@@ -20,5 +20,5 @@
     "jquery": "^3.6.0",
     "mousetrap": "^1.6.5"
   },
-  "description": ""
+  "description": "temporal action localization annotation tool"
 }

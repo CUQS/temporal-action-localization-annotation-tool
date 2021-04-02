@@ -41,7 +41,6 @@ function createWindow () {
             contextIsolation: false,
         }
     })
-
     win.loadURL(`file://${__dirname}/index.html`)
 }
 

@@ -1,5 +1,15 @@
 const { dialog } = require('@electron/remote');
-const { set } = require('electron-json-storage');
+
+let circle = document.querySelector('circle')
+let radius = circle.r.baseVal.value
+let circumference = radius * 2 * Math.PI
+circle.style.strokeDasharray = `${circumference} ${circumference}`
+circle.style.strokeDashoffset = `${circumference}`
+
+function setProgress(percent) {
+    const offset = circumference - percent / 100 * circumference
+    circle.style.strokeDashoffset = offset
+}
 
 let thumbnails = [];
 
@@ -237,11 +247,11 @@ let init = function () {
             });
 
             console.log('done...');
-
+            
+            duration = that.duration()
             setProgress(66)
             
             if (loading_flag) {
-                console.log("load: "+that.duration())
                 load_annotation_state()
                 loading_flag = false
             }
@@ -256,6 +266,7 @@ let init = function () {
 let vPlayer = null
 
 let change_video = function (vid) {
+    console.log(vid)
     vPlayer.src({type: "video/mp4", src: vid})
     thumbnails = []
     init()
@@ -291,8 +302,6 @@ function check_change() {
 function load_annotation_state() {
     ann_cur_id = ann_all["video"][cur_video_id]["action"].length
     ann_state = "create"
-    set_duration()
-    console.log("sync: "+duration)
     // duration = ann_all["video"][cur_video_id]["duration"]
     let ann_i = ann_all["video"][cur_video_id]["action"]
     if (ann_i.length > 0) {
@@ -369,18 +378,6 @@ vPlayer = videojs('video', {
 vPlayer.on('ready', function() {
     init()
 })
-
-let circle = document.querySelector('circle')
-let radius = circle.r.baseVal.value
-let circumference = radius * 2 * Math.PI
-circle.style.strokeDasharray = `${circumference} ${circumference}`
-circle.style.strokeDashoffset = `${circumference}`
-
-function setProgress(percent) {
-    const offset = circumference - percent / 100 * circumference
-    circle.style.strokeDashoffset = offset
-}
-setProgress(0)
 
 function load_project() {
     vids = []

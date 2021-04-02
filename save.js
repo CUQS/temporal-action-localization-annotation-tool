@@ -143,11 +143,7 @@ function add_ann_tool(idx) {
 
 // set start
 Mousetrap.bind('q', () => {
-    if (duration === 0) {
-        set_duration()
-        // console.log("duration :"+duration.toString())
-    }
-    if (ann_state === "modify" || ann_state === "create") {
+    if ((ann_state === "modify" || ann_state === "create") && loading_flag === false) {
         let currentTime = get_cur_time()
         let slider_bar = $('.vjs-play-progress.vjs-slider-bar')
         // while create a new action annotation
@@ -157,7 +153,6 @@ Mousetrap.bind('q', () => {
             let li_t = document.createElement("li")
             li_t.id = "ann_" + ann_cur_id
             li_t.className = "ann_text"
-            console.log($("#text_action_category").val())
             actino_now = $("#text_action_category").val()
             $('#ann_action').append(li_t)
             $('#ann_'+ann_cur_id).append(actino_now + " : " + currentTime.toFixed(3) + ", -")
@@ -186,10 +181,7 @@ Mousetrap.bind('q', () => {
 
 // set end
 Mousetrap.bind('e', () => {
-    if (duration === 0) {
-        set_duration()
-    }
-    if (ann_state === "modify") {
+    if (ann_state === "modify" && loading_flag === false) {
         let currentTime = get_cur_time()
         if (currentTime > ann_now["start"]) {
             ann_now["end"] = currentTime
@@ -202,7 +194,7 @@ Mousetrap.bind('e', () => {
 
 // next ann
 Mousetrap.bind('r', () => {
-    if (ann_now["end"] - ann_now["start"] > 0.1) {
+    if ((ann_now["end"] - ann_now["start"] > 0.1) && loading_flag === false) {
         let length_now = ann_all["video"][cur_video_id]["action"].length
         if (ann_cur_id === length_now) {
             ann_all["video"][cur_video_id]["action"].push(
